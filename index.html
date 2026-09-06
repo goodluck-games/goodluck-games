@@ -1,1 +1,889 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#6d28d9">
+
+<title>GoodLuck Games - GoodLuck Ludo</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:linear-gradient(135deg,#111827,#4c1d95);
+    color:white;
+    min-height:100vh;
+}
+
+.app{
+    max-width:520px;
+    margin:auto;
+    padding:15px;
+}
+
+header{
+    text-align:center;
+    padding:12px 0;
+}
+
+.logo{
+    font-size:32px;
+    font-weight:900;
+}
+
+.logo span{
+    color:#facc15;
+}
+
+.subtitle{
+    opacity:.8;
+    margin-top:5px;
+}
+
+.card{
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:20px;
+    padding:16px;
+    margin:13px 0;
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
+}
+
+input{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:12px;
+    font-size:16px;
+    outline:none;
+}
+
+button{
+    border:0;
+    border-radius:13px;
+    padding:13px 17px;
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.primary{
+    background:#facc15;
+    color:#111;
+}
+
+.secondary{
+    background:white;
+    color:#4c1d95;
+}
+
+.full{
+    width:100%;
+    margin-top:10px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:12px;
+}
+
+.stat{
+    background:rgba(0,0,0,.2);
+    border-radius:13px;
+    padding:10px 5px;
+    text-align:center;
+}
+
+.stat b{
+    display:block;
+    font-size:20px;
+}
+
+.stat small{
+    opacity:.75;
+}
+
+.board{
+    width:min(94vw,450px);
+    aspect-ratio:1;
+    margin:15px auto;
+    position:relative;
+    background:#f8fafc;
+    border:7px solid #facc15;
+    border-radius:18px;
+    overflow:hidden;
+}
+
+/* HOME AREAS */
+
+.home{
+    position:absolute;
+    width:38%;
+    height:38%;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+    padding:15px;
+    border-radius:12px;
+}
+
+.home div{
+    background:white;
+    border-radius:50%;
+    border:4px solid rgba(255,255,255,.9);
+    box-shadow:inset 0 0 0 5px rgba(0,0,0,.08);
+}
+
+.red{
+    background:#ef4444;
+    left:3%;
+    top:3%;
+}
+
+.green{
+    background:#22c55e;
+    right:3%;
+    top:3%;
+}
+
+.blue{
+    background:#3b82f6;
+    left:3%;
+    bottom:3%;
+}
+
+.yellow{
+    background:#eab308;
+    right:3%;
+    bottom:3%;
+}
+
+/* CENTRE */
+
+.center{
+    position:absolute;
+    left:35%;
+    top:35%;
+    width:30%;
+    height:30%;
+    background:
+      conic-gradient(
+        #22c55e 0 25%,
+        #eab308 25% 50%,
+        #3b82f6 50% 75%,
+        #ef4444 75%
+      );
+    clip-path:polygon(
+        50% 0,
+        100% 50%,
+        50% 100%,
+        0 50%
+    );
+}
+
+/* ROAD */
+
+.path{
+    position:absolute;
+    left:30%;
+    top:0;
+    width:40%;
+    height:100%;
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    grid-template-rows:repeat(15,1fr);
+    gap:2px;
+    padding:2px;
+}
+
+.cell{
+    background:#e5e7eb;
+    border-radius:2px;
+}
+
+.cell:nth-child(even){
+    background:#d1d5db;
+}
+
+/* PLAYERS */
+
+.piece{
+    position:absolute;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    border:3px solid white;
+    box-shadow:0 4px 8px #0008;
+}
+
+.p1{
+    background:#ef4444;
+    left:50%;
+    top:5%;
+    transform:translateX(-50%);
+}
+
+.p2{
+    background:#22c55e;
+    right:5%;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.p3{
+    background:#3b82f6;
+    left:50%;
+    bottom:5%;
+    transform:translateX(-50%);
+}
+
+.p4{
+    background:#eab308;
+    left:5%;
+    top:50%;
+    transform:translateY(-50%);
+}
+
+.dicebox{
+    text-align:center;
+}
+
+.dice{
+    font-size:60px;
+    margin:5px;
+}
+
+.message{
+    min-height:25px;
+    font-weight:bold;
+}
+
+.actions{
+    display:flex;
+    gap:10px;
+}
+
+.actions button{
+    flex:1;
+}
+
+.leader{
+    padding:8px 0;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    display:flex;
+    justify-content:space-between;
+}
+
+.rules{
+    font-size:13px;
+    line-height:1.6;
+    opacity:.85;
+}
+
+.hidden{
+    display:none;
+}
+
+footer{
+    text-align:center;
+    padding:15px;
+    font-size:12px;
+    opacity:.6;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+    <div class="logo">🍀 Good<span>Luck</span> Games</div>
+    <div class="subtitle">
+        GoodLuck Ludo • Free to Play
+    </div>
+</header>
+
+<!-- LOGIN -->
+
+<section class="card" id="loginCard">
+
+    <h2>🎮 Enter the Game</h2>
+
+    <input
+        id="playerName"
+        maxlength="18"
+        placeholder="Enter your player name"
+    >
+
+    <button
+        class="primary full"
+        onclick="startGame()">
+        Start Playing
+    </button>
+
+</section>
+
+
+<!-- GAME -->
+
+<div id="game" class="hidden">
+
+<section class="card">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+
+        <b id="welcome">Player</b>
+
+        <button
+            class="secondary"
+            onclick="dailyReward()">
+            🎁 Daily Reward
+        </button>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+            <b id="coins">1000</b>
+            <small>🪙 Coins</small>
+        </div>
+
+        <div class="stat">
+            <b id="wins">0</b>
+            <small>🏆 Wins</small>
+        </div>
+
+        <div class="stat">
+            <b id="score">0</b>
+            <small>⭐ Score</small>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- BOARD -->
+
+<section class="card">
+
+<div class="board">
+
+    <div class="home red">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <div class="home green">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <div class="home blue">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+    <div class="home yellow">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+
+
+    <div class="path" id="path"></div>
+
+    <div class="center"></div>
+
+    <div class="piece p1"></div>
+    <div class="piece p2"></div>
+    <div class="piece p3"></div>
+    <div class="piece p4"></div>
+
+</div>
+
+
+<div class="dicebox">
+
+    <div id="dice" class="dice">
+        🎲
+    </div>
+
+    <div id="message" class="message">
+        Roll the dice to play.
+    </div>
+
+
+    <div class="actions" style="margin-top:12px">
+
+        <button
+            class="primary"
+            onclick="rollDice()">
+            🎲 Roll Dice
+        </button>
+
+        <button
+            class="secondary"
+            onclick="newGame()">
+            🔄 New Game
+        </button>
+
+    </div>
+
+</div>
+
+</section>
+
+
+<!-- LEADERBOARD -->
+
+<section class="card">
+
+    <h3>🏆 Leaderboard</h3>
+
+    <div id="leaderboard">
+        No scores yet.
+    </div>
+
+</section>
+
+
+<!-- RULES -->
+
+<section class="card rules">
+
+<b>How to play</b><br><br>
+
+1. 🎲 Roll the dice.<br>
+
+2. ⭐ Every roll gives points.<br>
+
+3. 🎉 Rolling 6 gives bonus coins.<br>
+
+4. 🏆 Reach 100 points to win.<br>
+
+5. 🎁 Collect one daily reward.<br>
+
+6. 🪙 Coins are virtual only and have no cash value.
+
+</section>
+
+</div>
+
+
+<footer>
+    GoodLuck Games © 2026
+</footer>
+
+</div>
+
+
+<script>
+
+/* CREATE BOARD */
+
+const path=document.getElementById("path");
+
+for(let i=0;i<45;i++){
+
+    const cell=document.createElement("div");
+
+    cell.className="cell";
+
+    path.appendChild(cell);
+
+}
+
+
+/* GAME DATA */
+
+let state={
+    name:"",
+    coins:1000,
+    wins:0,
+    score:0
+};
+
+
+/* LOAD DATA */
+
+function loadData(){
+
+    const saved=localStorage.getItem("goodluckState");
+
+    if(saved){
+
+        try{
+
+            state=JSON.parse(saved);
+
+        }catch(e){
+
+            console.log(e);
+
+        }
+
+    }
+
+    updateScreen();
+
+}
+
+
+/* SAVE DATA */
+
+function saveData(){
+
+    localStorage.setItem(
+        "goodluckState",
+        JSON.stringify(state)
+    );
+
+    updateScreen();
+
+}
+
+
+/* UPDATE SCREEN */
+
+function updateScreen(){
+
+    document.getElementById("coins").textContent=
+        state.coins;
+
+    document.getElementById("wins").textContent=
+        state.wins;
+
+    document.getElementById("score").textContent=
+        state.score;
+
+    document.getElementById("welcome").textContent=
+        "👤 "+state.name;
+
+}
+
+
+/* START GAME */
+
+function startGame(){
+
+    const name=
+        document.getElementById("playerName")
+        .value.trim();
+
+    if(!name){
+
+        alert("Player name enter karein.");
+
+        return;
+    }
+
+
+    state.name=name;
+
+    state.coins=state.coins || 1000;
+
+    state.wins=state.wins || 0;
+
+    state.score=state.score || 0;
+
+
+    saveData();
+
+
+    document
+        .getElementById("loginCard")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("game")
+        .classList.remove("hidden");
+
+
+    document.getElementById("message").textContent=
+        "Good luck "+name+"! Roll the dice.";
+
+
+    showLeaderboard();
+
+}
+
+
+/* ROLL DICE */
+
+function rollDice(){
+
+    const roll=
+        Math.floor(Math.random()*6)+1;
+
+
+    const diceFaces=[
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+
+    document.getElementById("dice").textContent=
+        diceFaces[roll-1];
+
+
+    let points=roll*5;
+
+
+    if(roll===6){
+
+        points+=20;
+
+        state.coins+=50;
+
+        document.getElementById("message").textContent=
+            "🎉 You rolled 6! Bonus +50 coins.";
+
+    }else{
+
+        document.getElementById("message").textContent=
+            "You rolled "+roll+" — +"+points+" points.";
+
+    }
+
+
+    state.score+=points;
+
+
+    /* WIN */
+
+    if(state.score>=100){
+
+        state.wins++;
+
+        state.coins+=200;
+
+        state.score=0;
+
+        document.getElementById("message").textContent=
+            "🏆 YOU WON! +200 virtual coins.";
+
+    }
+
+
+    saveData();
+
+    showLeaderboard();
+
+}
+
+
+/* NEW GAME */
+
+function newGame(){
+
+    state.score=0;
+
+    document.getElementById("dice").textContent="🎲";
+
+    document.getElementById("message").textContent=
+        "New game started. Roll the dice.";
+
+    saveData();
+
+}
+
+
+/* DAILY REWARD */
+
+function dailyReward(){
+
+    const today=
+        new Date().toISOString().slice(0,10);
+
+    const rewardKey=
+        "goodluckReward_"+today;
+
+
+    if(localStorage.getItem(rewardKey)){
+
+        alert(
+            "Aaj ka Daily Reward already le chuke hain."
+        );
+
+        return;
+    }
+
+
+    localStorage.setItem(rewardKey,"1");
+
+
+    state.coins+=100;
+
+
+    saveData();
+
+
+    alert(
+        "🎁 Daily Reward!\n\n+100 Virtual Coins"
+    );
+
+}
+
+
+/* LEADERBOARD */
+
+function showLeaderboard(){
+
+    let board=[];
+
+    try{
+
+        board=JSON.parse(
+            localStorage.getItem("goodluckBoard") || "[]"
+        );
+
+    }catch(e){
+
+        board=[];
+
+    }
+
+
+    if(state.name){
+
+        const existing=
+            board.findIndex(
+                x=>x.name===state.name
+            );
+
+
+        if(existing>=0){
+
+            board[existing].wins=
+                state.wins;
+
+        }else{
+
+            board.push({
+
+                name:state.name,
+
+                wins:state.wins
+
+            });
+
+        }
+
+
+        board.sort(
+            (a,b)=>b.wins-a.wins
+        );
+
+
+        localStorage.setItem(
+            "goodluckBoard",
+            JSON.stringify(board)
+        );
+
+    }
+
+
+    const html=
+        board
+        .slice(0,10)
+        .map((player,index)=>{
+
+            return `
+            <div class="leader">
+                <span>
+                    ${index+1}. ${escapeHTML(player.name)}
+                </span>
+
+                <b>
+                    ${player.wins} 🏆
+                </b>
+            </div>
+            `;
+
+        })
+        .join("");
+
+
+    document.getElementById("leaderboard").innerHTML=
+        html || "No scores yet.";
+
+}
+
+
+/* SECURITY */
+
+function escapeHTML(text){
+
+    return text.replace(
+        /[&<>"']/g,
+        function(char){
+
+            return {
+
+                "&":"&amp;",
+                "<":"&lt;",
+                ">":"&gt;",
+                '"':"&quot;",
+                "'":"&#039;"
+
+            }[char];
+
+        }
+    );
+
+}
+
+
+/* LOAD */
+
+load();
+
+
+/* RETURNING PLAYER */
+
+if(state.name){
+
+    document
+        .getElementById("loginCard")
+        .classList.add("hidden");
+
+
+    document
+        .getElementById("game")
+        .classList.remove("hidden");
+
+
+    document.getElementById("message").textContent=
+        "Welcome back, "+state.name+"!";
+
+
+    showLeaderboard();
+
+}
+
+</script>
+
+</body>
+</html>
