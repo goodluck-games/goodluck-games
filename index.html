@@ -3,458 +3,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#6d28d9">
 
-<title>GoodLuck Games - GoodLuck Ludo</title>
+<title>GoodLuck Games</title>
 
 <style>
-*{box-sizing:border-box}
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
 body{
-    margin:0;
     font-family:Arial,sans-serif;
-    background:linear-gradient(135deg,#111827,#4c1d95);
+    background:linear-gradient(135deg,#12001f,#25004a,#08000f);
     color:white;
     min-height:100vh;
 }
 
-.app{
-    max-width:520px;
-    margin:auto;
-    padding:15px;
-}
-
 header{
     text-align:center;
-    padding:12px 0;
+    padding:25px 15px;
+    background:rgba(0,0,0,.35);
+    border-bottom:1px solid rgba(255,255,255,.1);
 }
 
-.logo{
+header h1{
     font-size:32px;
-    font-weight:900;
+    color:#fff;
 }
 
-.logo span{
-    color:#facc15;
+header p{
+    margin-top:7px;
+    color:#cdb9ff;
 }
 
-.subtitle{
-    opacity:.8;
-    margin-top:5px;
+.container{
+    width:94%;
+    max-width:900px;
+    margin:20px auto;
 }
 
 .card{
-    background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.15);
-    border-radius:20px;
-    padding:16px;
-    margin:13px 0;
-    box-shadow:0 12px 30px rgba(0,0,0,.25);
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:18px;
+    padding:20px;
+    margin-bottom:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+h2{
+    margin-bottom:15px;
+}
+
+/* LOGIN */
+#loginSection{
+    text-align:center;
 }
 
 input{
     width:100%;
+    max-width:400px;
     padding:14px;
-    border:0;
-    border-radius:12px;
+    border:none;
+    border-radius:10px;
+    margin:8px 0;
     font-size:16px;
-    outline:none;
 }
 
 button{
-    border:0;
-    border-radius:13px;
-    padding:13px 17px;
+    border:none;
+    border-radius:10px;
+    padding:12px 18px;
     font-size:15px;
     font-weight:bold;
     cursor:pointer;
-}
-
-.primary{
-    background:#facc15;
-    color:#111;
-}
-
-.secondary{
-    background:white;
-    color:#4c1d95;
-}
-
-.full{
-    width:100%;
-    margin-top:10px;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:8px;
-    margin-top:12px;
-}
-
-.stat{
-    background:rgba(0,0,0,.2);
-    border-radius:13px;
-    padding:10px 5px;
-    text-align:center;
-}
-
-.stat b{
-    display:block;
-    font-size:20px;
-}
-
-.stat small{
-    opacity:.75;
-}
-
-.board{
-    width:min(94vw,450px);
-    aspect-ratio:1;
-    margin:15px auto;
-    position:relative;
-    background:#f8fafc;
-    border:7px solid #facc15;
-    border-radius:18px;
-    overflow:hidden;
-}
-
-.home{
-    position:absolute;
-    width:38%;
-    height:38%;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    padding:15px;
-    border-radius:12px;
-}
-
-.home div{
-    background:white;
-    border-radius:50%;
-    border:4px solid rgba(255,255,255,.9);
-    box-shadow:inset 0 0 0 5px rgba(0,0,0,.08);
-}
-
-.red{
-    background:#ef4444;
-    left:3%;
-    top:3%;
-}
-
-.green{
-    background:#22c55e;
-    right:3%;
-    top:3%;
-}
-
-.blue{
-    background:#3b82f6;
-    left:3%;
-    bottom:3%;
-}
-
-.yellow{
-    background:#eab308;
-    right:3%;
-    bottom:3%;
-}
-
-.center{
-    position:absolute;
-    left:35%;
-    top:35%;
-    width:30%;
-    height:30%;
-    background:
-      conic-gradient(
-        #22c55e 0 25%,
-        #eab308 25% 50%,
-        #3b82f6 50% 75%,
-        #ef4444 75%
-      );
-    clip-path:polygon(
-        50% 0,
-        100% 50%,
-        50% 100%,
-        0 50%
-    );
-}
-
-.path{
-    position:absolute;
-    left:30%;
-    top:0;
-    width:40%;
-    height:100%;
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    grid-template-rows:repeat(15,1fr);
-    gap:2px;
-    padding:2px;
-}
-
-.cell{
-    background:#e5e7eb;
-    border-radius:2px;
-}
-
-.cell:nth-child(even){
-    background:#d1d5db;
-}
-
-.piece{
-    position:absolute;
-    width:30px;
-    height:30px;
-    border-radius:50%;
-    border:3px solid white;
-    box-shadow:0 4px 8px #0008;
-}
-
-.p1{
-    background:#ef4444;
-    left:50%;
-    top:5%;
-    transform:translateX(-50%);
-}
-
-.p2{
-    background:#22c55e;
-    right:5%;
-    top:50%;
-    transform:translateY(-50%);
-}
-
-.p3{
-    background:#3b82f6;
-    left:50%;
-    bottom:5%;
-    transform:translateX(-50%);
-}
-
-.p4{
-    background:#eab308;
-    left:5%;
-    top:50%;
-    transform:translateY(-50%);
-}
-
-.dicebox{
-    text-align:center;
-}
-
-.dice{
-    font-size:60px;
+    background:#8b5cf6;
+    color:white;
     margin:5px;
 }
 
-.message{
-    min-height:25px;
-    font-weight:bold;
+button:hover{
+    opacity:.9;
 }
 
-.actions{
+.logout{
+    background:#dc2626;
+}
+
+/* GAMES */
+.games-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:15px;
+}
+
+.game-card{
+    background:rgba(0,0,0,.3);
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:15px;
+    overflow:hidden;
+}
+
+.game-image{
+    width:100%;
+    height:150px;
+    object-fit:cover;
+    display:block;
+    background:linear-gradient(135deg,#7c3aed,#111827);
+}
+
+.game-placeholder{
+    height:150px;
     display:flex;
-    gap:10px;
+    align-items:center;
+    justify-content:center;
+    font-size:55px;
+    background:linear-gradient(135deg,#7c3aed,#111827);
 }
 
-.actions button{
-    flex:1;
-}
-
-.leader{
-    padding:8px 0;
-    border-bottom:1px solid rgba(255,255,255,.12);
-    display:flex;
-    justify-content:space-between;
-}
-
-.rules{
-    font-size:13px;
-    line-height:1.6;
-    opacity:.85;
-}
-
-.hidden{
-    display:none;
-}
-
-footer{
-    text-align:center;
+.game-info{
     padding:15px;
+}
+
+.game-info h3{
+    margin-bottom:7px;
+}
+
+.game-info p{
+    color:#cfc5df;
+    font-size:14px;
+    min-height:40px;
+}
+
+.category{
+    display:inline-block;
+    margin-top:10px;
+    padding:5px 9px;
+    border-radius:20px;
+    background:#4c1d95;
     font-size:12px;
-    opacity:.6;
+}
+
+.play-btn{
+    width:100%;
+    margin:12px 0 0;
+    background:#16a34a;
 }
 
 .loading{
     text-align:center;
-    opacity:.75;
+    color:#cdb9ff;
+    padding:20px;
+}
+
+.error{
+    color:#fca5a5;
+    text-align:center;
+    padding:15px;
+}
+
+/* STATS */
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.stat{
+    text-align:center;
+    padding:15px;
+    background:rgba(0,0,0,.25);
+    border-radius:12px;
+}
+
+.stat strong{
+    display:block;
+    font-size:25px;
+    margin-top:5px;
+}
+
+/* LUDO BOARD */
+.board{
+    display:grid;
+    grid-template-columns:repeat(9,1fr);
+    max-width:450px;
+    margin:20px auto;
+    gap:3px;
+}
+
+.cell{
+    aspect-ratio:1;
+    background:#eee;
+    color:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:4px;
+    font-size:11px;
+}
+
+.red{background:#ef4444!important;}
+.green{background:#22c55e!important;}
+.yellow{background:#eab308!important;}
+.blue{background:#3b82f6!important;}
+
+.controls{
+    text-align:center;
+}
+
+#dice{
+    font-size:45px;
+    margin:15px;
+}
+
+.message{
+    text-align:center;
+    color:#d8b4fe;
+    margin:10px;
+}
+
+/* LEADERBOARD */
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
     padding:10px;
+    text-align:center;
+    border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+th{
+    color:#c4b5fd;
+}
+
+/* RESPONSIVE */
+@media(max-width:500px){
+    header h1{
+        font-size:26px;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .board{
+        max-width:330px;
+    }
+
+    button{
+        width:auto;
+    }
 }
 </style>
 </head>
 
 <body>
 
-<div class="app">
-
 <header>
-    <div class="logo">🍀 Good<span>Luck</span> Games</div>
-    <div class="subtitle">
-        GoodLuck Ludo • Free to Play
-    </div>
+    <h1>🎮 GoodLuck Games</h1>
+    <p>Play • Win • Enjoy</p>
 </header>
 
-<section class="card" id="loginCard">
+<div class="container">
 
-    <h2>🎮 Enter the Game</h2>
+    <!-- LOGIN -->
+    <div class="card" id="loginSection">
+        <h2>👤 Player Login</h2>
+        <p style="color:#cfc5df;margin-bottom:10px;">
+            Enter your name to start playing
+        </p>
 
-    <input
-        id="playerName"
-        maxlength="18"
-        placeholder="Enter your player name"
-    >
+        <input
+            type="text"
+            id="playerName"
+            placeholder="Enter your name"
+        >
 
-    <button
-        class="primary full"
-        onclick="startGame()">
-        Start Playing
-    </button>
+        <br>
 
-</section>
-
-<div id="game" class="hidden">
-
-<section class="card">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-
-        <b id="welcome">Player</b>
-
-        <button
-            class="secondary"
-            onclick="dailyReward()">
-            🎁 Daily Reward
+        <button onclick="startGame()">
+            🚀 Start Game
         </button>
-
     </div>
 
-    <div class="stats">
+    <!-- PLAYER AREA -->
+    <div id="playerArea" style="display:none;">
 
-        <div class="stat">
-            <b id="coins">1000</b>
-            <small>🪙 Coins</small>
+        <!-- PLAYER INFO -->
+        <div class="card">
+            <h2>👋 Welcome, <span id="displayName"></span></h2>
+
+            <div class="stats">
+                <div class="stat">
+                    🪙 Coins
+                    <strong id="coins">0</strong>
+                </div>
+
+                <div class="stat">
+                    🏆 Wins
+                    <strong id="wins">0</strong>
+                </div>
+
+                <div class="stat">
+                    ⭐ Score
+                    <strong id="score">0</strong>
+                </div>
+            </div>
+
+            <div style="text-align:center;margin-top:15px;">
+                <button onclick="dailyReward()">
+                    🎁 Daily Reward
+                </button>
+
+                <button class="logout" onclick="logout()">
+                    Logout
+                </button>
+            </div>
         </div>
 
-        <div class="stat">
-            <b id="wins">0</b>
-            <small>🏆 Wins</small>
+        <!-- FIREBASE GAMES -->
+        <div class="card">
+            <h2>🎮 Available Games</h2>
+
+            <div id="gamesContainer">
+                <div class="loading">
+                    Loading games from Firebase...
+                </div>
+            </div>
         </div>
 
-        <div class="stat">
-            <b id="score">0</b>
-            <small>⭐ Score</small>
+        <!-- LUDO -->
+        <div class="card">
+            <h2>🎲 GoodLuck Ludo</h2>
+
+            <div class="message" id="gameMessage">
+                Roll the dice and play!
+            </div>
+
+            <div id="dice">🎲</div>
+
+            <div class="board" id="board"></div>
+
+            <div class="controls">
+                <button onclick="rollDice()">
+                    🎲 Roll Dice
+                </button>
+
+                <button onclick="newGame()">
+                    🔄 New Game
+                </button>
+            </div>
+        </div>
+
+        <!-- LEADERBOARD -->
+        <div class="card">
+            <h2>🏆 Top Players</h2>
+
+            <div id="leaderboard">
+                Loading leaderboard...
+            </div>
+        </div>
+
+        <!-- RULES -->
+        <div class="card">
+            <h2>📜 Rules</h2>
+
+            <p style="line-height:1.8;color:#ddd;">
+                • Roll the dice to play.<br>
+                • Complete your game and collect score.<br>
+                • Wins increase your leaderboard position.<br>
+                • Daily reward can be collected once per day.<br>
+                • Have fun and play responsibly.
+            </p>
         </div>
 
     </div>
-
-</section>
-
-<section class="card">
-
-<div class="board">
-
-    <div class="home red">
-        <div></div><div></div><div></div><div></div>
-    </div>
-
-    <div class="home green">
-        <div></div><div></div><div></div><div></div>
-    </div>
-
-    <div class="home blue">
-        <div></div><div></div><div></div><div></div>
-    </div>
-
-    <div class="home yellow">
-        <div></div><div></div><div></div><div></div>
-    </div>
-
-    <div class="path" id="path"></div>
-
-    <div class="center"></div>
-
-    <div class="piece p1"></div>
-    <div class="piece p2"></div>
-    <div class="piece p3"></div>
-    <div class="piece p4"></div>
-
-</div>
-
-<div class="dicebox">
-
-    <div id="dice" class="dice">🎲</div>
-
-    <div id="message" class="message">
-        Roll the dice to play.
-    </div>
-
-    <div class="actions" style="margin-top:12px">
-
-        <button
-            class="primary"
-            onclick="rollDice()">
-            🎲 Roll Dice
-        </button>
-
-        <button
-            class="secondary"
-            onclick="newGame()">
-            🔄 New Game
-        </button>
-
-    </div>
-
-</div>
-
-</section>
-
-<section class="card">
-
-    <h3>🏆 Leaderboard</h3>
-
-    <div id="leaderboard">
-        <div class="loading">Loading leaderboard...</div>
-    </div>
-
-</section>
-
-<section class="card rules">
-
-<b>How to play</b><br><br>
-
-1. 🎲 Roll the dice.<br>
-2. ⭐ Every roll gives points.<br>
-3. 🎉 Rolling 6 gives bonus coins.<br>
-4. 🏆 Reach 100 points to win.<br>
-5. 🎁 Collect one daily reward.<br>
-6. 🪙 Coins are virtual only and have no cash value.
-
-</section>
-
-</div>
-
-<footer>
-    GoodLuck Games © 2026
-</footer>
 
 </div>
 
 
 <!-- FIREBASE -->
-
 <script type="module">
 
 import { initializeApp }
@@ -469,12 +400,15 @@ import {
     getDocs,
     query,
     orderBy,
-    limit
+    limit,
+    serverTimestamp
 }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-/* FIREBASE CONFIG */
+/* =========================
+   FIREBASE CONFIG
+========================= */
 
 const firebaseConfig = {
     apiKey: "AIzaSyADsmwqO_G44WTf5Kqdve4esoxSLdiUcIA",
@@ -487,348 +421,532 @@ const firebaseConfig = {
 };
 
 
-/* INITIALIZE FIREBASE */
+/* =========================
+   FIREBASE START
+========================= */
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
 
 
-/* GAME STATE */
+/* =========================
+   PLAYER DATA
+========================= */
 
-let state = {
+let player = {
     name:"",
-    coins:1000,
+    coins:100,
     wins:0,
     score:0
 };
 
-
-/* BOARD */
-
-const path = document.getElementById("path");
-
-for(let i=0;i<45;i++){
-
-    const cell=document.createElement("div");
-
-    cell.className="cell";
-
-    path.appendChild(cell);
-
-}
+let playerId = "";
 
 
-/* SAFE PLAYER ID */
+/* =========================
+   SAFE PLAYER ID
+========================= */
 
-function playerId(name){
+function createPlayerId(name){
 
     return name
-        .toLowerCase()
         .trim()
-        .replace(/[^a-z0-9]+/g,"_")
-        .replace(/^_+|_+$/g,"")
-        .slice(0,40) || "player";
-
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g,"-")
+        .replace(/^-|-$/g,"")
+        .substring(0,40);
 }
 
 
-/* LOAD PLAYER FROM FIRESTORE */
+/* =========================
+   LOAD PLAYER
+========================= */
 
 async function loadPlayer(name){
 
-    const id = playerId(name);
+    playerId = createPlayerId(name);
 
-    try{
-
-        const ref = doc(db,"players",id);
-
-        const snap = await getDoc(ref);
-
-        if(snap.exists()){
-
-            state = {
-                ...state,
-                ...snap.data(),
-                name:name
-            };
-
-        }else{
-
-            await setDoc(ref,{
-                name:name,
-                coins:1000,
-                wins:0,
-                score:0,
-                createdAt:new Date()
-            });
-
-        }
-
-        updateScreen();
-
-    }catch(error){
-
-        console.error(error);
-
-        document.getElementById("message").textContent =
-            "⚠️ Firebase connection error.";
-
+    if(!playerId){
+        alert("Please enter a valid name.");
+        return;
     }
 
+    const playerRef = doc(db,"players",playerId);
+    const snapshot = await getDoc(playerRef);
+
+    if(snapshot.exists()){
+
+        const data = snapshot.data();
+
+        player = {
+            name:data.name || name,
+            coins:Number(data.coins ?? 100),
+            wins:Number(data.wins ?? 0),
+            score:Number(data.score ?? 0)
+        };
+
+    }else{
+
+        player = {
+            name:name,
+            coins:100,
+            wins:0,
+            score:0
+        };
+
+        await setDoc(playerRef,{
+            name:player.name,
+            coins:player.coins,
+            wins:player.wins,
+            score:player.score,
+            createdAt:serverTimestamp(),
+            updatedAt:serverTimestamp()
+        });
+    }
+
+    updateUI();
 }
 
 
-/* SAVE PLAYER */
+/* =========================
+   SAVE PLAYER
+========================= */
 
 async function saveData(){
 
-    if(!state.name) return;
-
-    const id = playerId(state.name);
+    if(!playerId) return;
 
     try{
 
         await setDoc(
-            doc(db,"players",id),
+            doc(db,"players",playerId),
             {
-                name:state.name,
-                coins:Number(state.coins)||0,
-                wins:Number(state.wins)||0,
-                score:Number(state.score)||0,
-                updatedAt:new Date()
+                name:player.name,
+                coins:player.coins,
+                wins:player.wins,
+                score:player.score,
+                updatedAt:serverTimestamp()
             },
             {merge:true}
         );
+
+        showLeaderboard();
+
+    }catch(error){
+
+        console.error("Save error:",error);
+    }
+}
+
+
+/* =========================
+   UPDATE UI
+========================= */
+
+function updateUI(){
+
+    document.getElementById("displayName").textContent =
+        player.name;
+
+    document.getElementById("coins").textContent =
+        player.coins;
+
+    document.getElementById("wins").textContent =
+        player.wins;
+
+    document.getElementById("score").textContent =
+        player.score;
+}
+
+
+/* =========================
+   LOAD GAMES
+========================= */
+
+async function loadGames(){
+
+    const container =
+        document.getElementById("gamesContainer");
+
+    container.innerHTML =
+        `<div class="loading">
+            🎮 Loading games...
+        </div>`;
+
+    try{
+
+        const gamesRef = collection(db,"games");
+
+        const gamesQuery =
+            query(
+                gamesRef,
+                orderBy("createdAt","desc")
+            );
+
+        const snapshot =
+            await getDocs(gamesQuery);
+
+        if(snapshot.empty){
+
+            container.innerHTML =
+                `<div class="loading">
+                    No games available yet.
+                </div>`;
+
+            return;
+        }
+
+        let html = "";
+
+        snapshot.forEach((gameDoc)=>{
+
+            const game = gameDoc.data();
+
+            /* Only ACTIVE games */
+            if(
+                game.status &&
+                String(game.status).toLowerCase() !== "active"
+            ){
+                return;
+            }
+
+            const name =
+                game.name || "GoodLuck Game";
+
+            const description =
+                game.description || "Enjoy this game!";
+
+            const category =
+                game.category || "Game";
+
+            const imageUrl =
+                game.imageUrl || "";
+
+            const gameUrl =
+                game.gameUrl || "#";
+
+
+            let imageHTML = "";
+
+            if(imageUrl){
+
+                imageHTML = `
+                    <img
+                        class="game-image"
+                        src="${escapeHTML(imageUrl)}"
+                        alt="${escapeHTML(name)}"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex';"
+                    >
+
+                    <div
+                        class="game-placeholder"
+                        style="display:none;"
+                    >
+                        🎮
+                    </div>
+                `;
+
+            }else{
+
+                imageHTML = `
+                    <div class="game-placeholder">
+                        🎮
+                    </div>
+                `;
+            }
+
+
+            html += `
+                <div class="game-card">
+
+                    ${imageHTML}
+
+                    <div class="game-info">
+
+                        <h3>
+                            ${escapeHTML(name)}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(description)}
+                        </p>
+
+                        <span class="category">
+                            ${escapeHTML(category)}
+                        </span>
+
+                        <button
+                            class="play-btn"
+                            onclick="openGame('${escapeJS(gameUrl)}')"
+                        >
+                            ▶️ Play Now
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+        });
+
+
+        if(!html){
+
+            container.innerHTML =
+                `<div class="loading">
+                    No active games available.
+                </div>`;
+
+        }else{
+
+            container.innerHTML =
+                `<div class="games-grid">${html}</div>`;
+        }
+
+    }catch(error){
+
+        console.error("Games loading error:",error);
+
+        container.innerHTML = `
+            <div class="error">
+                ❌ Games load nahi ho rahe.<br>
+                Firebase connection/rules check karein.
+            </div>
+        `;
+    }
+}
+
+
+/* =========================
+   SECURITY HELPERS
+========================= */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+
+function escapeJS(value){
+
+    return String(value)
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/\n/g,"\\n")
+        .replace(/\r/g,"\\r");
+}
+
+
+/* =========================
+   OPEN GAME
+========================= */
+
+window.openGame = function(url){
+
+    if(!url || url === "#"){
+
+        alert(
+            "Is game ka Game URL abhi Firebase mein set nahi hai."
+        );
+
+        return;
+    }
+
+    window.open(url,"_blank");
+};
+
+
+/* =========================
+   START GAME
+========================= */
+
+window.startGame = async function(){
+
+    const input =
+        document.getElementById("playerName");
+
+    const name =
+        input.value.trim();
+
+    if(!name){
+
+        alert("Please enter your name.");
+        return;
+    }
+
+    try{
+
+        await loadPlayer(name);
+
+        document.getElementById("loginSection")
+            .style.display = "none";
+
+        document.getElementById("playerArea")
+            .style.display = "block";
+
+        createBoard();
+
+        await loadGames();
+
+        await showLeaderboard();
 
     }catch(error){
 
         console.error(error);
 
-        document.getElementById("message").textContent =
-            "⚠️ Data save nahi ho saka.";
-
+        alert(
+            "Firebase connection error. Please check Firestore."
+        );
     }
+};
 
-    updateScreen();
 
-}
+/* =========================
+   LOGOUT
+========================= */
 
+window.logout = function(){
 
-/* SCREEN */
+    location.reload();
+};
 
-function updateScreen(){
 
-    document.getElementById("coins").textContent =
-        state.coins;
+/* =========================
+   DAILY REWARD
+========================= */
 
-    document.getElementById("wins").textContent =
-        state.wins;
-
-    document.getElementById("score").textContent =
-        state.score;
-
-    document.getElementById("welcome").textContent =
-        "👤 "+state.name;
-
-}
-
-
-/* START GAME */
-
-async function startGame(){
-
-    const name =
-        document
-        .getElementById("playerName")
-        .value
-        .trim();
-
-    if(!name){
-
-        alert("Player name enter karein.");
-
-        return;
-
-    }
-
-
-    state.name=name;
-
-    document.getElementById("message").textContent =
-        "Connecting to Firebase...";
-
-
-    document
-        .getElementById("loginCard")
-        .classList.add("hidden");
-
-
-    document
-        .getElementById("game")
-        .classList.remove("hidden");
-
-
-    await loadPlayer(name);
-
-    document.getElementById("message").textContent =
-        "Good luck "+name+"! Roll the dice.";
-
-    showLeaderboard();
-
-}
-
-
-/* ROLL DICE */
-
-async function rollDice(){
-
-    if(!state.name){
-
-        alert("Pehle game start karein.");
-
-        return;
-
-    }
-
-
-    const roll =
-        Math.floor(Math.random()*6)+1;
-
-
-    const diceFaces=[
-        "⚀",
-        "⚁",
-        "⚂",
-        "⚃",
-        "⚄",
-        "⚅"
-    ];
-
-
-    document.getElementById("dice").textContent =
-        diceFaces[roll-1];
-
-
-    let points=roll*5;
-
-
-    if(roll===6){
-
-        points+=20;
-
-        state.coins+=50;
-
-        document.getElementById("message").textContent =
-            "🎉 You rolled 6! Bonus +50 coins.";
-
-    }else{
-
-        document.getElementById("message").textContent =
-            "You rolled "+roll+" — +"+points+" points.";
-
-    }
-
-
-    state.score+=points;
-
-
-    if(state.score>=100){
-
-        state.wins++;
-
-        state.coins+=200;
-
-        state.score=0;
-
-        document.getElementById("message").textContent =
-            "🏆 YOU WON! +200 virtual coins.";
-
-    }
-
-
-    await saveData();
-
-    showLeaderboard();
-
-}
-
-
-/* NEW GAME */
-
-function newGame(){
-
-    state.score=0;
-
-    document.getElementById("dice").textContent="🎲";
-
-    document.getElementById("message").textContent =
-        "New game started. Roll the dice.";
-
-    saveData();
-
-}
-
-
-/* DAILY REWARD */
-
-async function dailyReward(){
-
-    if(!state.name) return;
-
+window.dailyReward = async function(){
 
     const today =
         new Date().toISOString().slice(0,10);
 
+    const key =
+        "goodluck_daily_" + playerId;
 
-    const rewardKey =
-        "goodluckReward_"+today;
+    const lastClaim =
+        localStorage.getItem(key);
 
+    if(lastClaim === today){
 
-    if(localStorage.getItem(rewardKey)){
-
-        alert(
-            "Aaj ka Daily Reward already le chuke hain."
-        );
-
+        alert("Aaj ka reward already claim ho chuka hai.");
         return;
-
     }
 
+    player.coins += 50;
 
-    localStorage.setItem(rewardKey,"1");
+    localStorage.setItem(key,today);
 
-
-    state.coins+=100;
-
+    updateUI();
 
     await saveData();
 
+    alert("🎁 Daily Reward: +50 Coins!");
+};
 
-    alert(
-        "🎁 Daily Reward!\n\n+100 Virtual Coins"
-    );
 
+/* =========================
+   DICE
+========================= */
+
+window.rollDice = async function(){
+
+    const dice =
+        Math.floor(Math.random()*6)+1;
+
+    document.getElementById("dice")
+        .textContent = dice;
+
+    document.getElementById("gameMessage")
+        .textContent =
+        "You rolled " + dice + "!";
+
+    player.score += dice;
+
+    if(dice === 6){
+
+        player.coins += 10;
+
+        document.getElementById("gameMessage")
+            .textContent =
+            "🎉 You rolled 6! +10 coins!";
+    }
+
+    updateUI();
+
+    await saveData();
+};
+
+
+/* =========================
+   NEW GAME
+========================= */
+
+window.newGame = function(){
+
+    document.getElementById("dice")
+        .textContent = "🎲";
+
+    document.getElementById("gameMessage")
+        .textContent =
+        "New game started! Roll the dice.";
+};
+
+
+/* =========================
+   LUDO BOARD
+========================= */
+
+function createBoard(){
+
+    const board =
+        document.getElementById("board");
+
+    board.innerHTML = "";
+
+    for(let i=1;i<=45;i++){
+
+        const cell =
+            document.createElement("div");
+
+        cell.className = "cell";
+
+        if(i<=10){
+            cell.classList.add("red");
+        }
+        else if(i<=20){
+            cell.classList.add("green");
+        }
+        else if(i<=30){
+            cell.classList.add("yellow");
+        }
+        else if(i<=40){
+            cell.classList.add("blue");
+        }
+
+        cell.textContent = i;
+
+        board.appendChild(cell);
+    }
 }
 
 
-/* LEADERBOARD */
+/* =========================
+   LEADERBOARD
+========================= */
 
 async function showLeaderboard(){
 
-    const box =
+    const leaderboard =
         document.getElementById("leaderboard");
-
-
-    box.innerHTML =
-        '<div class="loading">Loading leaderboard...</div>';
-
 
     try{
 
         const playersRef =
             collection(db,"players");
-
 
         const q =
             query(
@@ -837,103 +955,70 @@ async function showLeaderboard(){
                 limit(10)
             );
 
-
         const snapshot =
             await getDocs(q);
 
+        if(snapshot.empty){
 
-        const players=[];
+            leaderboard.innerHTML =
+                "<p style='text-align:center;'>No players yet.</p>";
 
+            return;
+        }
+
+        let html = `
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Player</th>
+                        <th>Wins</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+        `;
+
+        let position = 1;
 
         snapshot.forEach((item)=>{
 
-            players.push({
-                id:item.id,
-                ...item.data()
-            });
+            const data = item.data();
 
+            html += `
+                <tr>
+                    <td>${position}</td>
+                    <td>${escapeHTML(data.name || "Player")}</td>
+                    <td>${Number(data.wins || 0)}</td>
+                    <td>${Number(data.score || 0)}</td>
+                </tr>
+            `;
+
+            position++;
         });
 
+        html += `
+                </tbody>
+            </table>
+        `;
 
-        if(!players.length){
-
-            box.textContent =
-                "No scores yet.";
-
-            return;
-
-        }
-
-
-        box.innerHTML =
-            players
-            .map((player,index)=>{
-
-                return `
-                <div class="leader">
-
-                    <span>
-                        ${index+1}. ${escapeHTML(player.name || "Player")}
-                    </span>
-
-                    <b>
-                        ${Number(player.wins)||0} 🏆
-                    </b>
-
-                </div>
-                `;
-
-            })
-            .join("");
-
+        leaderboard.innerHTML = html;
 
     }catch(error){
 
-        console.error(error);
+        console.error("Leaderboard error:",error);
 
-        box.innerHTML =
-            "⚠️ Leaderboard load nahi ho saka.";
-
+        leaderboard.innerHTML =
+            "<p style='text-align:center;'>Leaderboard loading error.</p>";
     }
-
 }
 
 
-/* SECURITY */
-
-function escapeHTML(text){
-
-    return String(text).replace(
-        /[&<>"']/g,
-        function(char){
-
-            return {
-
-                "&":"&amp;",
-                "<":"&lt;",
-                ">":"&gt;",
-                '"':"&quot;",
-                "'":"&#039;"
-
-            }[char];
-
-        }
-    );
-
-}
-
-
-/* MAKE FUNCTIONS AVAILABLE TO BUTTONS */
-
-window.startGame = startGame;
-window.rollDice = rollDice;
-window.newGame = newGame;
-window.dailyReward = dailyReward;
-
-
-/* START */
-
-showLeaderboard();
+/* =========================
+   AUTO LOAD EXISTING LOGIN
+========================= */
 
 </script>
 
