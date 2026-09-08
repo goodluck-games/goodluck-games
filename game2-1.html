@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>GoodLuck Games - Coin Catch</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden}
+body{font-family:Arial,sans-serif;background:#080018;color:#fff;touch-action:none}
+#game{position:relative;width:100%;height:100%;max-width:650px;margin:auto;overflow:hidden;background:linear-gradient(#18a8ed,#8be4ff 68%,#46b94c)}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+.hud{position:absolute;top:12px;left:12px;right:12px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.box{background:rgba(0,35,95,.88);border:2px solid #39caff;border-radius:14px;padding:7px 18px;text-align:center;min-width:105px;box-shadow:0 5px 12px #0005}
+.box small{display:block;font-size:11px;color:#d5f5ff}.box b{font-size:25px}
+#pause{width:52px;height:52px;border:2px solid #fff;border-radius:13px;background:#116cc8;color:#fff;font-size:23px}
+#hint{position:absolute;top:82px;left:50%;transform:translateX(-50%);z-index:5;background:#003b78cc;border:1px solid #55d5ff;border-radius:20px;padding:7px 13px;font-size:12px;white-space:nowrap}
+#menu{position:absolute;z-index:10;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:10px}
+button{border:0;border-radius:13px;padding:13px 22px;font-size:16px;font-weight:bold;color:#fff}
+#play{background:#1dbb4b}#reset{background:#146fc9}
+#modal{position:absolute;z-index:20;left:50%;top:50%;transform:translate(-50%,-50%);width:86%;max-width:390px;text-align:center;background:#06245beF;border:2px solid #39caff;border-radius:22px;padding:25px;box-shadow:0 15px 40px #0008}
+#modal h1{margin:0 0 10px;font-size:30px}
+#modal p{color:#d9f5ff;line-height:1.5}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div id="game">
+<canvas id="canvas"></canvas>
+
+<div class="hud">
+  <div class="box"><small>SCORE</small><b id="score">0</b></div>
+  <div class="box"><small>TIME</small><b id="time">60</b></div>
+  <button id="pause" onclick="togglePause()">Ⅱ</button>
+</div>
+
+<div id="hint">🪙 Catch coins &nbsp; • &nbsp; 💣 Avoid bombs</div>
+
+<div id="modal">
+  <h1>🪙 Coin Catch</h1>
+  <p>Move the basket left and right. Catch coins and avoid bombs!</p>
+  <button id="play" onclick="startGame()">▶ PLAY</button>
+</div>
+
+<div id="menu">
+  <button id="reset" onclick="resetGame()">🔄 RESET</button>
+</div>
+</div>
+
+<script>
+const canvas=document.getElementById("canvas"),ctx=canvas.getContext("2d");
+let W=0,H=0,playing=false,paused=false,score=0,timeLeft=60,items=[],lastSpawn=0,lastFrame=0,raf=0;
+const basket={x:0,y:0,w:92,h:34};
+
+function resize(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+  basket.y=H-88;
+  if(basket.x===0) basket.x=W/2-basket.w/2;
+  keepBasket();
+}
+window.addEventListener("resize",resize);
+
+function drawBackground(){
+  const g=ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,"#12a4e8");g.addColorStop(.68,"#8ce5ff");g.addColorStop(1,"#43b34b");
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+
+  ctx.fillStyle="rgba(255,255,255,.78)";
+  for(let i=0;i<4;i++){
+    const x=(i*210+45)%W,y=150+(i%2)*75;
+    ctx.beginPath();ctx.arc(x,y,25,0,Math.PI*2);ctx.arc(x+30,y-10,32,0,Math.PI*2);ctx.arc(x+62,y,25,0,Math.PI*2);ctx.fill();
+  }
+
+  ctx.fillStyle="rgba(35,120,190,.38)";
+  ctx.beginPath();ctx.moveTo(0,H-155);ctx.lineTo(120,H-315);ctx.lineTo(245,H-155);ctx.lineTo(360,H-290);ctx.lineTo(520,H-155);ctx.lineTo(W,H-275);ctx.lineTo(W,H);ctx.lineTo(0,H);ctx.fill();
+
+  ctx.fillStyle="#31a844";ctx.fillRect(0,H-55,W,55);
+}
+
+function drawBasket(){
+  ctx.fillStyle="#a85d24";
+  ctx.beginPath();ctx.roundRect(basket.x,basket.y,basket.w,basket.h,12);ctx.fill();
+  ctx.strokeStyle="#ffd17a";ctx.lineWidth=4;ctx.stroke();
+  ctx.fillStyle="#df8d37";ctx.fillRect(basket.x+8,basket.y+7,basket.w-16,8);
+}
+
+function spawn(){
+  const bomb=Math.random()<.16;
+  items.push({x:25+Math.random()*(W-50),y:-30,r:bomb?19:18,s:3+Math.random()*3,type:bomb?"bomb":"coin"});
+}
+
+function drawItem(o){
+  if(o.type==="coin"){
+    ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+    ctx.fillStyle="#ffd21c";ctx.fill();ctx.strokeStyle="#ff9b00";ctx.lineWidth=4;ctx.stroke();
+    ctx.fillStyle="#fff3a7";ctx.font="bold 19px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("$",o.x,o.y);
+  }else{
+    ctx.beginPath();ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+    ctx.fillStyle="#15152b";ctx.fill();ctx.strokeStyle="#000";ctx.lineWidth=3;ctx.stroke();
+    ctx.font="18px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText("💣",o.x,o.y);
+  }
+}
+
+function hit(o){
+  return o.x+o.r>basket.x && o.x-o.r<basket.x+basket.w &&
+         o.y+o.r>basket.y && o.y-o.r<basket.y+basket.h;
+}
+
+function frame(t){
+  if(!playing)return;
+  raf=requestAnimationFrame(frame);
+  if(paused){lastFrame=t;return}
+  const dt=Math.min((t-lastFrame)/1000,.05);lastFrame=t;
+
+  drawBackground();
+  if(t-lastSpawn>650){spawn();lastSpawn=t}
+
+  for(let i=items.length-1;i>=0;i--){
+    const o=items[i];o.y+=o.s;drawItem(o);
+    if(hit(o)){
+      if(o.type==="coin"){score++;document.getElementById("score").textContent=score}
+      else{gameOver("💣 BOOM!");return}
+      items.splice(i,1);continue;
+    }
+    if(o.y>H+50)items.splice(i,1);
+  }
+
+  drawBasket();
+  timeLeft-=dt;
+  document.getElementById("time").textContent=Math.ceil(Math.max(0,timeLeft));
+  if(timeLeft<=0)gameOver("⏰ TIME UP!");
+}
+
+function startGame(){
+  playing=true;paused=false;score=0;timeLeft=60;items=[];
+  basket.x=W/2-basket.w/2;
+  document.getElementById("score").textContent="0";
+  document.getElementById("time").textContent="60";
+  document.getElementById("pause").textContent="Ⅱ";
+  document.getElementById("modal").classList.add("hidden");
+  cancelAnimationFrame(raf);
+  lastFrame=performance.now();lastSpawn=performance.now();
+  raf=requestAnimationFrame(frame);
+}
+
+function gameOver(title){
+  playing=false;cancelAnimationFrame(raf);
+  const best=Math.max(score,Number(localStorage.getItem("coinBest")||0));
+  localStorage.setItem("coinBest",best);
+  document.getElementById("modal").innerHTML=
+    `<h1>${title}</h1><p>🪙 Your Score: <b>${score}</b><br>🏆 Best Score: <b>${best}</b></p>
+     <button id="play" onclick="startGame()">▶ PLAY AGAIN</button>`;
+  document.getElementById("modal").classList.remove("hidden");
+}
+
+function resetGame(){
+  playing=false;paused=false;score=0;timeLeft=60;items=[];cancelAnimationFrame(raf);
+  document.getElementById("score").textContent="0";document.getElementById("time").textContent="60";
+  document.getElementById("pause").textContent="Ⅱ";
+  document.getElementById("modal").innerHTML=
+    `<h1>🪙 Coin Catch</h1><p>Move the basket left and right. Catch coins and avoid bombs!</p>
+     <button id="play" onclick="startGame()">▶ PLAY</button>`;
+  document.getElementById("modal").classList.remove("hidden");
+  drawBackground();drawBasket();
+}
+
+function togglePause(){
+  if(!playing)return;
+  paused=!paused;document.getElementById("pause").textContent=paused?"▶":"Ⅱ";
+}
+
+function keepBasket(){
+  if(basket.x<0)basket.x=0;
+  if(basket.x+basket.w>W)basket.x=W-basket.w;
+}
+document.addEventListener("keydown",e=>{
+  if(e.key==="ArrowLeft")basket.x-=25;
+  if(e.key==="ArrowRight")basket.x+=25;
+  keepBasket();
+});
+canvas.addEventListener("touchmove",e=>{
+  e.preventDefault();basket.x=e.touches[0].clientX-basket.w/2;keepBasket();
+},{passive:false});
+
+resize();drawBackground();drawBasket();
+</script>
+</body>
+</html>
