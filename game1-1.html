@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+<title>GoodLuck LUDO</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,sans-serif}
+body{background:linear-gradient(135deg,#07002a,#17105d,#050018);color:#fff}
+.app{max-width:900px;margin:auto;padding:12px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#10145d;border:2px solid #315cff;border-radius:18px;padding:10px 14px;box-shadow:0 8px 25px #0006}
+.logo{font-weight:900;font-size:27px;color:#ffd21c;text-shadow:2px 2px #8b3d00}
+.logo span{display:block;color:#fff;font-size:20px;letter-spacing:4px}
+.coins{background:#06245c;border:2px solid #35caff;border-radius:12px;padding:8px 12px;font-weight:bold}
+.panel{margin-top:12px;background:#0d1450;border:2px solid #273f9d;border-radius:18px;padding:12px}
+.players{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.player{border-radius:12px;padding:9px;text-align:center;font-weight:bold;border:2px solid #555;background:#101838}
+.player.active{outline:3px solid #fff;transform:translateY(-2px)}
+.pieceDot{width:24px;height:24px;border-radius:50%;margin:5px auto 0;border:2px solid #fff}
+.red{background:#ef3434}.green{background:#22bd5a}.yellow{background:#ffc928}.blue{background:#2488f5}
+#status{text-align:center;font-weight:bold;font-size:18px;margin:8px}
+.boardWrap{display:flex;justify-content:center}
+.board{width:min(92vw,560px);aspect-ratio:1;display:grid;grid-template-columns:repeat(15,1fr);grid-template-rows:repeat(15,1fr);background:#fff;border:5px solid #17256f;border-radius:12px;overflow:hidden;position:relative}
+.cell{border:1px solid #aab2c7;background:#f8f9ff;display:flex;align-items:center;justify-content:center;font-size:clamp(7px,1.8vw,13px);color:#5c6480;position:relative}
+.home{grid-column:span 6;grid-row:span 6;display:grid;place-items:center;padding:9px}
+.homeInner{width:82%;height:82%;background:#fff;border-radius:15px;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:9px;padding:12px}
+.slot{border-radius:50%;border:3px solid #ffffff99;box-shadow:inset 0 0 0 3px #0002}
+.home.redHome{background:#ef3434}.home.greenHome{background:#22bd5a}.home.yellowHome{background:#ffc928}.home.blueHome{background:#2488f5}
+.path.redPath{background:#ffcccc}.path.greenPath{background:#c8f3d6}.path.yellowPath{background:#fff0ad}.path.bluePath{background:#cfe6ff}
+.center{grid-column:7/10;grid-row:7/10;background:conic-gradient(#22bd5a 0 25%,#2488f5 25% 50%,#ffc928 50% 75%,#ef3434 75% 100%);clip-path:polygon(50% 50%,0 0,100% 0,50% 50%,100% 100%,50% 50%,0 100%,50% 50%);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900}
+.token{position:absolute;width:22px;height:22px;border-radius:50%;border:3px solid #fff;box-shadow:0 2px 5px #0008;z-index:5;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:bold}
+.controls{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:13px;padding:13px 20px;font-size:16px;font-weight:800;color:#fff;background:#157ee8;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+#dice{font-size:34px;min-width:70px;text-align:center;background:#fff;color:#111;border-radius:12px;padding:8px 15px;box-shadow:0 5px 10px #0005}
+#new{background:#19ad4b}.back{background:#5639bb}
+.rules{color:#dbe3ff;line-height:1.6;font-size:14px}
+.note{text-align:center;color:#b9c8ff;font-size:12px;margin-top:8px}
+@media(max-width:500px){
+ .app{padding:7px}.logo{font-size:22px}.logo span{font-size:16px}
+ .players{grid-template-columns:repeat(2,1fr)}
+ .panel{padding:9px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo">👑 GoodLuck<span>LUDO</span></div>
+  <div class="coins">🪙 <span id="coins">100</span></div>
+</header>
+
+<div class="panel">
+  <div class="players">
+    <div class="player active" id="p0">🔴 Player 1<div class="pieceDot red"></div></div>
+    <div class="player" id="p1">🟢 Player 2<div class="pieceDot green"></div></div>
+    <div class="player" id="p2">🟡 Player 3<div class="pieceDot yellow"></div></div>
+    <div class="player" id="p3">🔵 Player 4<div class="pieceDot blue"></div></div>
+  </div>
+  <div id="status">Player 1: Roll the dice</div>
+</div>
+
+<div class="panel boardWrap">
+  <div class="board" id="board"></div>
+</div>
+
+<div class="panel">
+  <div class="controls">
+    <button id="roll" onclick="rollDice()">🎲 Roll Dice</button>
+    <div id="dice">⚀</div>
+    <button id="new" onclick="newGame()">🔄 New Game</button>
+    <button class="back" onclick="history.back()">↩ Back</button>
+  </div>
+  <div class="note">Tap a highlighted token to move it. A 6 brings a token out of home.</div>
+</div>
+
+<div class="panel rules">
+  <b>📜 How to Play</b><br>
+  • Roll the dice to move your token.<br>
+  • Roll 6 to bring a token onto the board.<br>
+  • First player to complete a lap with a token wins the round.<br>
+  • Player 1 is controlled by you; the other players are simple computer opponents.
+</div>
+</div>
+
+<script>
+const colors=["red","green","yellow","blue"];
+const names=["Player 1","Player 2","Player 3","Player 4"];
+const starts=[0,13,26,39];
+let current=0, dice=0, rolling=false;
+let pos=[-1,-1,-1,-1]; // one token per player for a simple playable round
+let coins=Number(localStorage.getItem("goodluckCoins")||100);
+document.getElementById("coins").textContent=coins;
+
+const board=document.getElementById("board");
+
+function buildBoard(){
+  board.innerHTML="";
+  for(let r=0;r<15;r++){
+    for(let c=0;c<15;c++){
+      const el=document.createElement("div");
+      el.className="cell";
+      // four home corners
+      if(r<6&&c<6){el.className="home redHome"; if(r===0&&c===0) el.innerHTML='<div class="homeInner"><i class="slot red"></i><i class="slot red"></i><i class="slot red"></i><i class="slot red"></i></div>'}
+      else if(r<6&&c>8){el.className="home greenHome"; if(r===0&&c===9) el.innerHTML='<div class="homeInner"><i class="slot green"></i><i class="slot green"></i><i class="slot green"></i><i class="slot green"></i></div>'}
+      else if(r>8&&c<6){el.className="home yellowHome"; if(r===9&&c===0) el.innerHTML='<div class="homeInner"><i class="slot yellow"></i><i class="slot yellow"></i><i class="slot yellow"></i><i class="slot yellow"></i></div>'}
+      else if(r>8&&c>8){el.className="home blueHome"; if(r===9&&c===9) el.innerHTML='<div class="homeInner"><i class="slot blue"></i><i class="slot blue"></i><i class="slot blue"></i><i class="slot blue"></i></div>'}
+      else if(r>=6&&r<=8&&c>=6&&c<=8){el.className="center"; if(r===7&&c===7)el.textContent="★"}
+      else {
+        el.className="cell path";
+        // central lanes
+        if(c>=6&&c<=8) el.classList.add(r<7?"greenPath":r>7?"yellowPath":"");
+        if(r>=6&&r<=8) el.classList.add(c<7?"redPath":c>7?"bluePath":"");
+      }
+      board.appendChild(el);
+    }
+  }
+  drawTokens();
+}
+
+function pathCells(){
+  const a=[];
+  // clockwise 48-cell outer loop around center
+  for(let c=6;c<=8;c++) a.push([5,c]);
+  for(let r=4;r<=8;r++) a.push([r,9]);
+  for(let c=10;c<=14;c++) a.push([9,c]);
+  for(let r=10;r<=14;r++) a.push([r,9]);
+  for(let c=8;c>=6;c--) a.push([9,c]);
+  for(let r=10;r<=14;r++) a.push([r,5]);
+  for(let c=4;c>=0;c--) a.push([9,c]);
+  for(let r=8;r>=6;r--) a.push([r,5]);
+  for(let c=4;c>=0;c--) a.push([5,c]);
+  for(let r=4;r>=0;r--) a.push([r,5]);
+  for(let c=6;c<=8;c++) a.push([5,c]);
+  return a;
+}
+const path=pathCells();
+
+function drawTokens(){
+  document.querySelectorAll(".token").forEach(x=>x.remove());
+  pos.forEach((p,i)=>{
+    if(p<0)return;
+    const idx=(starts[i]+p)%path.length;
+    const [r,c]=path[idx];
+    const cell=board.children[r*15+c];
+    const t=document.createElement("div");
+    t.className="token "+colors[i];
+    t.textContent=i+1;
+    t.style.left="50%";t.style.top="50%";t.style.transform="translate(-50%,-50%)";
+    cell.style.position="relative";
+    cell.appendChild(t);
+  });
+}
+
+function setStatus(txt){document.getElementById("status").textContent=txt}
+function highlightPlayer(){
+  for(let i=0;i<4;i++)document.getElementById("p"+i).classList.toggle("active",i===current);
+}
+
+function rollDice(){
+  if(rolling||current!==0)return;
+  rolling=true;
+  dice=Math.floor(Math.random()*6)+1;
+  document.getElementById("dice").textContent=["","⚀","⚁","⚂","⚃","⚄","⚅"][dice];
+  setStatus("Player 1 rolled "+dice+"!");
+  setTimeout(()=>moveHuman(),450);
+}
+
+function moveHuman(){
+  if(dice===6 && pos[0]===-1) pos[0]=0;
+  else if(pos[0]>=0) pos[0]+=dice;
+  drawTokens();
+  if(pos[0]>=path.length){winRound(0);return}
+  if(dice!==6) setTimeout(botTurn,600); else {rolling=false;setStatus("Player 1 gets another turn! Roll again.");}
+}
+
+function botTurn(){
+  current=1+Math.floor(Math.random()*3);
+  highlightPlayer();
+  dice=Math.floor(Math.random()*6)+1;
+  document.getElementById("dice").textContent=["","⚀","⚁","⚂","⚃","⚄","⚅"][dice];
+  setStatus(names[current]+" rolled "+dice);
+  setTimeout(()=>{
+    if(dice===6 && pos[current]===-1)pos[current]=0;
+    else if(pos[current]>=0)pos[current]+=dice;
+    drawTokens();
+    if(pos[current]>=path.length){winRound(current);return}
+    if(dice===6){setTimeout(botTurn,500)}
+    else {current=0;highlightPlayer();rolling=false;setStatus("Player 1: Roll the dice")}
+  },500);
+}
+
+function winRound(w){
+  if(w===0){coins+=25;localStorage.setItem("goodluckCoins",coins);document.getElementById("coins").textContent=coins}
+  setStatus("🏆 "+names[w]+" wins the round!");
+  rolling=false;
+  setTimeout(()=>alert("🏆 "+names[w]+" wins! "+(w===0?"+25 coins":"")),200);
+}
+
+function newGame(){
+  current=0;dice=0;rolling=false;pos=[-1,-1,-1,-1];
+  document.getElementById("dice").textContent="⚀";
+  highlightPlayer();setStatus("Player 1: Roll the dice");drawTokens();
+}
+
+buildBoard();
+</script>
+</body>
+</html>
